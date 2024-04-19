@@ -1,0 +1,52 @@
+.logo {
+  text-align: left;
+  color: RGB(0, 128, 0);
+  font-weight: 700;
+  padding-left: 12px;
+}
+.login,
+.signup {
+  text-align: left;
+  color: blue;
+  font-weight: 700;
+}
+.TestSignup {
+  text-align: left;
+  color: rgb(135, 206, 250);
+  font-weight: 700;
+}
+.row {
+  display: flex;
+  margin: 0 auto;
+  background-color: RGB(135, 206, 250);
+  position: fixed;
+  width: 85%;
+  align-items: center;
+  column-gap: 24px;
+}
+.cart {
+  flex-grow: 1;
+  text-align: right;
+  padding: 12px;
+}
+.cart i {
+  font-size: 22pt;
+}
+.cartamount sup {
+  text-align: right;
+  color: white;
+  background-color: red;
+  border-radius: 5px;
+  padding: 0 5px;
+  position: relative;
+  top: -5px;
+}
+
+.signOutBtn {
+  cursor: pointer;
+}
+
+.userName {
+  text-decoration: none;
+  color: #000;
+}

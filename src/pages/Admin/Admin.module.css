@@ -1,0 +1,25 @@
+.headerWrap {
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.menuItem {
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.menuLeft {
+  display: flex;
+  align-items: center;
+  column-gap: 24px;
+}
+
+.content {
+  padding: 12px;
+  background-color: #f6f6f6;
+  min-height: calc(100vh - 75px);
+}

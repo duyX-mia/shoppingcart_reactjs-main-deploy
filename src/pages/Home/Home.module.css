@@ -1,0 +1,63 @@
+.container {
+  margin: 0 auto;
+  width: 85%;
+  border: #cacaca solid 1px;
+}
+.row {
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  column-gap: 32px;
+  min-width: 500px;
+}
+.left {
+}
+.right {
+  flex: 1;
+}
+.cat {
+  text-align: left;
+  border: 1px solid #1b32a5;
+  padding: 10px 15px;
+}
+.cat:hover {
+  background-color: #1c2554;
+  color: white;
+  font-size: 16pt;
+  cursor: pointer;
+}
+.boxes {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.product {
+  border: 1px solid #cacaca;
+  border-radius: 5px;
+  padding: 10px;
+}
+.productImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.product button {
+  color: blue;
+  background-color: antiquewhite;
+  padding: 5px 10px;
+}
+.datontai {
+  color: orangered;
+  font-style: italic;
+}
+
+.button {
+  outline: none;
+  border: none;
+  padding: 8px 12px !important;
+  background-color: #000 !important;
+  color: #fff !important;
+  cursor: pointer;
+  border-radius: 4px;
+}
