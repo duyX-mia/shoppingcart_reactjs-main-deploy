@@ -66,6 +66,10 @@ const productSlice = createSlice({
         (it) => it.categoryId === payload
       );
     },
+
+    resetProduct: (state) => {
+      state.product = {};
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getProducts.fulfilled, (state, action) => {
@@ -85,6 +89,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { getProductByCategoryId } = productSlice.actions;
+export const { getProductByCategoryId, resetProduct } = productSlice.actions;
 export default productSlice.reducer;
 export const selectProduct = (state) => state.product;

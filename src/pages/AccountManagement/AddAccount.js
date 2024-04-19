@@ -2,20 +2,15 @@ import React from "react";
 
 import styles from "./Account.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { addAccount } from "../../redux/reducer/AccountsSlide";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { Formik } from "formik";
+import { SignUpSchema } from "../SignUp/Signup";
 
 const AddAccount = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -37,62 +32,85 @@ const AddAccount = () => {
         </Link>
       </div>
 
-      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <p>
-          <label htmlFor="username">Username:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="username"
-            id="username"
-            {...register("username", {
-              required: "Vui lòng nhập username",
-            })}
-          />
+      <Formik
+        initialValues={{
+          username: "",
+          email: "",
+          password: "",
+        }}
+        onSubmit={onSubmit}
+        validationSchema={SignUpSchema}
+      >
+        {({
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+        }) => (
+          <form
+            className={styles.form}
+            autoComplete="off"
+            onSubmit={handleSubmit}
+          >
+            <p>
+              <label htmlFor="username">Username:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="username"
+                id="username"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.username}
+              />
 
-          {errors.username?.message && (
-            <p className={styles.errorMsg}>{errors.username?.message}</p>
-          )}
-        </p>
+              {errors.username && touched.username && (
+                <p className={styles.errorMsg}>{errors.username}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="email">Email:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="email"
-            id="email"
-            {...register("email", {
-              required: "Vui lòng nhập email",
-            })}
-          />
+            <p>
+              <label htmlFor="email">Email:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="email"
+                id="email"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.email}
+              />
 
-          {errors.email?.message && (
-            <p className={styles.errorMsg}>{errors.email?.message}</p>
-          )}
-        </p>
+              {errors.email && touched.email && (
+                <p className={styles.errorMsg}>{errors.email}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="password">Password:</label>
-          <input
-            className={styles.formControl}
-            type="password"
-            name="password"
-            id="password"
-            {...register("password", {
-              required: "Vui lòng nhập mật khẩu",
-            })}
-          />
+            <p>
+              <label htmlFor="password">Password:</label>
+              <input
+                className={styles.formControl}
+                type="password"
+                name="password"
+                id="password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.password}
+              />
 
-          {errors.password?.message && (
-            <p className={styles.errorMsg}>{errors.password?.message}</p>
-          )}
-        </p>
+              {errors.password && touched.password && (
+                <p className={styles.errorMsg}>{errors.password}</p>
+              )}
+            </p>
 
-        <p>
-          <input type="submit" value="Add" />
-        </p>
-      </form>
+            <p className={styles.btnWrap}>
+              <input type="submit" value="Add" className={styles.addBtn} />
+            </p>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 };

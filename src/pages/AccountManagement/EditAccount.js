@@ -2,40 +2,34 @@ import React, { useEffect } from "react";
 
 import styles from "./Account.module.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import {
-  addAccount,
   editAccount,
   fetchAccount,
+  resetAccount,
+  selectAccountState,
 } from "../../redux/reducer/AccountsSlide";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { Formik } from "formik";
+import { SignUpSchema } from "../SignUp/Signup";
 
 const EditAccount = () => {
+  const { account } = useSelector(selectAccountState);
   const params = useParams();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-
-    formState: { errors },
-  } = useForm();
-
   useEffect(() => {
     fetchAccountById();
+
+    return () => {
+      dispatch(resetAccount());
+    };
   }, [params?.id]);
 
-  const fetchAccountById = async () => {
-    try {
-      const res = await dispatch(fetchAccount(params?.id)).unwrap();
-      reset(res);
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchAccountById = () => {
+    dispatch(fetchAccount(params?.id));
   };
 
   const onSubmit = async (data) => {
@@ -58,62 +52,82 @@ const EditAccount = () => {
         </Link>
       </div>
 
-      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <p>
-          <label htmlFor="username">Username:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="username"
-            id="username"
-            {...register("username", {
-              required: "Vui lòng nhập username",
-            })}
-          />
+      <Formik
+        enableReinitialize
+        initialValues={account}
+        onSubmit={onSubmit}
+        validationSchema={SignUpSchema}
+      >
+        {({
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <form
+            className={styles.form}
+            autoComplete="off"
+            onSubmit={handleSubmit}
+          >
+            <p>
+              <label htmlFor="username">Username:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="username"
+                id="username"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.username}
+              />
 
-          {errors.username?.message && (
-            <p className={styles.errorMsg}>{errors.username?.message}</p>
-          )}
-        </p>
+              {errors.username && touched.username && (
+                <p className={styles.errorMsg}>{errors.username}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="email">Email:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="email"
-            id="email"
-            {...register("email", {
-              required: "Vui lòng nhập email",
-            })}
-          />
+            <p>
+              <label htmlFor="email">Email:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="email"
+                id="email"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.email}
+              />
 
-          {errors.email?.message && (
-            <p className={styles.errorMsg}>{errors.email?.message}</p>
-          )}
-        </p>
+              {errors.email && touched.email && (
+                <p className={styles.errorMsg}>{errors.email}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="password">Password:</label>
-          <input
-            className={styles.formControl}
-            type="password"
-            name="password"
-            id="password"
-            {...register("password", {
-              required: "Vui lòng nhập mật khẩu",
-            })}
-          />
+            <p>
+              <label htmlFor="password">Password:</label>
+              <input
+                className={styles.formControl}
+                type="password"
+                name="password"
+                id="password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.password}
+              />
 
-          {errors.password?.message && (
-            <p className={styles.errorMsg}>{errors.password?.message}</p>
-          )}
-        </p>
+              {errors.password && touched.password && (
+                <p className={styles.errorMsg}>{errors.password}</p>
+              )}
+            </p>
 
-        <p>
-          <input type="submit" value="Update" />
-        </p>
-      </form>
+            <p className={styles.btnWrap}>
+              <input type="submit" value="Update" className={styles.addBtn} />
+            </p>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 };

@@ -68,7 +68,11 @@ export const editCategory = createAsyncThunk("category/edit", async (data) => {
 const categorySlice = createSlice({
   name: "category",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCategory: (state) => {
+      state.category = {};
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getCategories.fulfilled, (state, action) => {
       if (action.payload) {
@@ -87,4 +91,5 @@ const categorySlice = createSlice({
 });
 
 export default categorySlice.reducer;
+export const { resetCategory } = categorySlice.actions;
 export const selectCategories = (state) => state.category;

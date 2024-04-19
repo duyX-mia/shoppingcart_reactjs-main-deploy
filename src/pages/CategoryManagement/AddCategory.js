@@ -2,20 +2,19 @@ import React from "react";
 
 import styles from "./Category.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { addCategory } from "../../redux/reducer/categorySlice";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+export const CategorySchema = Yup.object().shape({
+  name: Yup.string().required("Vui lòng nhập tên danh mục"),
+});
 
 const AddCategory = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -37,28 +36,43 @@ const AddCategory = () => {
         </Link>
       </div>
 
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <p>
-          <label htmlFor="name">Name:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="name"
-            id="name"
-            {...register("name", {
-              required: "Vui lòng nhập tên danh mục",
-            })}
-          />
+      <Formik
+        initialValues={{ name: "" }}
+        onSubmit={onSubmit}
+        validationSchema={CategorySchema}
+      >
+        {({
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+        }) => (
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <p>
+              <label htmlFor="name">Name:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="name"
+                id="name"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.name}
+              />
 
-          {errors.name?.message && (
-            <p className={styles.errorMsg}>{errors.name?.message}</p>
-          )}
-        </p>
+              {errors.name && touched.name && (
+                <p className={styles.errorMsg}>{errors.name}</p>
+              )}
+            </p>
 
-        <p className={styles.btnWrap}>
-          <input type="submit" value="Add" className={styles.addBtn} />
-        </p>
-      </form>
+            <p className={styles.btnWrap}>
+              <input type="submit" value="Add" className={styles.addBtn} />
+            </p>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 };

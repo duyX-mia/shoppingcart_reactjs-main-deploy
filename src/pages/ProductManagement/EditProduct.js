@@ -2,28 +2,28 @@ import React, { useEffect } from "react";
 
 import styles from "./Product.module.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
   getCategories,
   selectCategories,
 } from "../../redux/reducer/categorySlice";
-import { editProduct, getProduct } from "../../redux/reducer/productSlice";
+import {
+  editProduct,
+  getProduct,
+  resetProduct,
+  selectProduct,
+} from "../../redux/reducer/productSlice";
+import { Formik } from "formik";
+import { ProductSchema } from "./AddProduct";
 
 const EditProduct = () => {
   const { categories } = useSelector(selectCategories);
+  const { product } = useSelector(selectProduct);
   const params = useParams();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
 
   useEffect(() => {
     dispatch(getCategories());
@@ -31,15 +31,14 @@ const EditProduct = () => {
 
   useEffect(() => {
     params?.id && fetchProductById();
+
+    return () => {
+      dispatch(resetProduct());
+    };
   }, [params?.id]);
 
   const fetchProductById = async () => {
-    try {
-      const data = await dispatch(getProduct(params?.id)).unwrap();
-      reset(data);
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(getProduct(params?.id));
   };
 
   const onSubmit = async (data) => {
@@ -62,101 +61,117 @@ const EditProduct = () => {
         </Link>
       </div>
 
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <p>
-          <label htmlFor="name">Name:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="name"
-            id="name"
-            {...register("name", {
-              required: "Vui lòng nhập tên sản phẩm",
-            })}
-          />
+      <Formik
+        enableReinitialize
+        initialValues={product}
+        onSubmit={onSubmit}
+        validationSchema={ProductSchema}
+      >
+        {({
+          handleBlur,
+          handleSubmit,
+          handleChange,
+          values,
+          errors,
+          touched,
+        }) => (
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <p>
+              <label htmlFor="name">Name:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="name"
+                id="name"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.name}
+              />
 
-          {errors.name?.message && (
-            <p className={styles.errorMsg}>{errors.name?.message}</p>
-          )}
-        </p>
+              {errors.name && touched.name && (
+                <p className={styles.errorMsg}>{errors.name}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="image">Image:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="image"
-            id="image"
-            {...register("image", {
-              required: "Vui lòng nhập link ảnh sản phẩm",
-            })}
-          />
+            <p>
+              <label htmlFor="image">Image:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="image"
+                id="image"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.image}
+              />
 
-          {errors.image?.message && (
-            <p className={styles.errorMsg}>{errors.image?.message}</p>
-          )}
-        </p>
+              {errors.image && touched.image && (
+                <p className={styles.errorMsg}>{errors.image}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="price">Price:</label>
-          <input
-            className={styles.formControl}
-            type="text"
-            name="price"
-            id="price"
-            {...register("price", {
-              required: "Vui lòng nhập giá sản phẩm",
-            })}
-          />
+            <p>
+              <label htmlFor="price">Price:</label>
+              <input
+                className={styles.formControl}
+                type="text"
+                name="price"
+                id="price"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.price}
+              />
 
-          {errors.price?.message && (
-            <p className={styles.errorMsg}>{errors.price?.message}</p>
-          )}
-        </p>
+              {errors.price && touched.price && (
+                <p className={styles.errorMsg}>{errors.price}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="categoryId">Category:</label>
+            <p>
+              <label htmlFor="categoryId">Category:</label>
 
-          <select
-            name="categoryId"
-            {...register("categoryId", {
-              required: "Vui lòng chọn danh mục SP",
-            })}
-          >
-            <option value="">Chọn danh mục sản phẩm</option>
-            {categories.map((it) => (
-              <option key={`category-item-${it.id}`} value={it.id}>
-                {it.name}
-              </option>
-            ))}
-          </select>
+              <select
+                name="categoryId"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.categoryId}
+              >
+                <option value="">Chọn danh mục sản phẩm</option>
+                {categories.map((it) => (
+                  <option key={`category-item-${it.id}`} value={it.id}>
+                    {it.name}
+                  </option>
+                ))}
+              </select>
 
-          {errors.categoryId?.message && (
-            <p className={styles.errorMsg}>{errors.categoryId?.message}</p>
-          )}
-        </p>
+              {errors.categoryId && touched.categoryId && (
+                <p className={styles.errorMsg}>{errors.categoryId}</p>
+              )}
+            </p>
 
-        <p>
-          <label htmlFor="description">Description:</label>
-          <textarea
-            className={styles.formControl}
-            type="text"
-            name="description"
-            id="description"
-            {...register("description", {
-              required: "Vui lòng nhập mô tả sản phẩm",
-            })}
-          />
+            <p>
+              <label htmlFor="description">Description:</label>
+              <textarea
+                className={styles.formControl}
+                type="text"
+                name="description"
+                id="description"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.description}
+              />
 
-          {errors.description?.message && (
-            <p className={styles.errorMsg}>{errors.description?.message}</p>
-          )}
-        </p>
+              {errors.description && touched.description && (
+                <p className={styles.errorMsg}>{errors.description}</p>
+              )}
+            </p>
 
-        <p className={styles.btnWrap}>
-          <input type="submit" value="Update" className={styles.addBtn} />
-        </p>
-      </form>
+            <p className={styles.btnWrap}>
+              <input type="submit" value="Update" className={styles.addBtn} />
+            </p>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 };

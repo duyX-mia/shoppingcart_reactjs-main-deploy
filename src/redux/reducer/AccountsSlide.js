@@ -66,7 +66,11 @@ export const editAccount = createAsyncThunk(
 const AccountSlice = createSlice({
   name: "accounts",
   initialState,
-  reducers: {},
+  reducers: {
+    resetAccount: (state) => {
+      state.account = {};
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAccounts.fulfilled, (state, action) => {
@@ -93,4 +97,5 @@ const AccountSlice = createSlice({
 });
 
 export default AccountSlice;
+export const { resetAccount } = AccountSlice.actions;
 export const selectAccountState = (state) => state.accounts;
