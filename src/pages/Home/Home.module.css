@@ -4,11 +4,12 @@
   border: #cacaca solid 1px;
 }
 .row {
-  padding-top: 50px;
+  padding-top: 30px;
   display: flex;
   align-items: center;
   column-gap: 32px;
   min-width: 500px;
+  justify-content: center;
 }
 .left {
 }

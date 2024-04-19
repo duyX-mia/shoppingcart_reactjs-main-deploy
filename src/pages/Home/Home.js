@@ -70,8 +70,23 @@ function Home() {
   return (
     <div className={classes.container}>
       <Header soluong={cart.length} setShowCart={setShowCart} />
+      
       <div className={classes.row}>
-        <h1>Shopping Cart Demo</h1>
+        <h1>Duy Shopping Cart</h1>
+      </div>
+
+      <div className={classes.row}>
+        <div class="sub-banner">
+          <img
+            src="https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/2024/01/banner/1920x450--2--1920x450.jpg"
+            alt="sub banner"
+            width="100%"
+            height="400px"
+          />
+        </div>
+      </div>
+
+      <div className={classes.row}>
         {/* <button onClick={() => setShowModal(true)}>Test show Modal</button> */}
         {isShowModal && (
           <Modal closeModal={closeModal}>
