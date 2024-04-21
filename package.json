@@ -11,6 +11,7 @@
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.78",
     "@types/react-dom": "^18.2.25",
+    "aos": "^2.3.4",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "form-data": "^4.0.0",

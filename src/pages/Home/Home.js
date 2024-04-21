@@ -3,6 +3,11 @@ import classes from "./Home.module.css";
 import Modal from "../../components/Modal";
 import Header from "../../components/Header";
 import Giohang from "../../components/Giohang";
+import Advertisement from "../../components/Advertisement";
+import HomeBanner from "../../components/HomeBanner";
+import Benefit from "../../components/Benefit";
+import Footer from "../../components/Footer";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCategories,
@@ -86,6 +91,8 @@ function Home() {
         </div>
       </div>
 
+      <HomeBanner />
+
       <div className={classes.row}>
         {/* <button onClick={() => setShowModal(true)}>Test show Modal</button> */}
         {isShowModal && (
@@ -164,6 +171,10 @@ function Home() {
           )}
         </div>
       </div>
+      <Benefit />
+      <Advertisement />
+      <Footer />
+
     </div>
   );
 }

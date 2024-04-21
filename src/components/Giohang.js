@@ -43,6 +43,7 @@ function Giohang({ setShowCart, cart, setCart }) {
           </div>
           <div className={classes.title}>{product.name}</div>
           <div className={classes.controls}>
+            <p>Quantity</p>
             <button onClick={() => thaydoisoluong(product, 1)}>+</button>
             <input type="text" value={product.amount} readOnly={true} />
             <button onClick={() => thaydoisoluong(product, -1)}>-</button>
