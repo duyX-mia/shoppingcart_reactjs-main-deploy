@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./Account.module.css";
 import { Link } from "react-router-dom";
@@ -7,14 +7,23 @@ import {
   deleteAccount,
   fetchAccounts,
 } from "../../redux/reducer/AccountsSlide";
+import Table from "react-bootstrap/Table";
+import Pagination from "../../components/pagination/Pagination";
+import { useDebounce } from "../../hook/useDebounce";
 
 const ListAccount = () => {
-  const { accounts } = useSelector((state) => state.accounts);
+  const [params, setParams] = useState({
+    page: 1,
+    search: "",
+  });
+  const { accounts, meta } = useSelector((state) => state.accounts);
   const dispatch = useDispatch();
 
+  const searchStr = useDebounce(params.search, 500);
+
   useEffect(() => {
-    dispatch(fetchAccounts());
-  }, []);
+    dispatch(fetchAccounts(params));
+  }, [params.page, searchStr]);
 
   const onDeleteAccount = (id) => {
     const isConfirm = window.confirm(
@@ -24,6 +33,11 @@ const ListAccount = () => {
     if (isConfirm) {
       dispatch(deleteAccount(id));
     }
+  };
+
+  const onInputFieldChange = (e) => {
+    const value = e.target.value;
+    setParams({ page: 1, search: value });
   };
 
   return (
@@ -36,7 +50,18 @@ const ListAccount = () => {
         </Link>
       </div>
 
-      <table border={1} className={styles.table}>
+      <div className="mt-3 justify-content-end d-flex">
+        <div style={{ width: 300 }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Nhập từ khoá tìm kiếm"
+            onChange={onInputFieldChange}
+          />
+        </div>
+      </div>
+
+      <Table bordered hover className={styles.table}>
         <thead>
           <th>STT</th>
           <th>ID</th>
@@ -71,7 +96,9 @@ const ListAccount = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
+
+      <Pagination meta={meta} setParams={setParams} />
     </>
   );
 };

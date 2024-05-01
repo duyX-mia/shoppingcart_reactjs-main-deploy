@@ -1,13 +1,21 @@
 import React from "react";
 
+import styles from "./Benefit.module.css";
+import classNames from "classnames";
+
 function Benefit(params) {
   return (
-    <div className="benefit" data-aos="fade-up">
+    <div className={styles.wrapper} data-aos="fade-up">
       <div className="container">
-        <div className="row benefit_row">
-          <div className="col-lg-3 benefit_col">
-            <div className="benefit_item d-flex flex-row align-items-center">
-              <div className="benefit_icon">
+        <div className="row">
+          <div className={classNames("col-lg-3", styles.benefitCol)}>
+            <div
+              className={classNames(
+                "d-flex flex-row align-items-center",
+                styles.benefitItem
+              )}
+            >
+              <div className={styles.benefitIcon}>
                 <i className="fa fa-truck" aria-hidden="true"></i>
               </div>
               <div className="benefit_content">
@@ -16,10 +24,15 @@ function Benefit(params) {
               </div>
             </div>
           </div>
-          <div className="col-lg-3 benefit_col">
-            <div className="benefit_item d-flex flex-row align-items-center">
-              <div className="benefit_icon">
-                <i className="far fa-money-bill-alt"></i>
+          <div className={classNames("col-lg-3", styles.benefitCol)}>
+            <div
+              className={classNames(
+                "d-flex flex-row align-items-center",
+                styles.benefitItem
+              )}
+            >
+              <div className={styles.benefitIcon}>
+                <i class="fa-solid fa-money-bill"></i>
               </div>
               <div className="benefit_content">
                 <h6>cach on delivery</h6>
@@ -27,9 +40,14 @@ function Benefit(params) {
               </div>
             </div>
           </div>
-          <div className="col-lg-3 benefit_col">
-            <div className="benefit_item d-flex flex-row align-items-center">
-              <div className="benefit_icon">
+          <div className={classNames("col-lg-3", styles.benefitCol)}>
+            <div
+              className={classNames(
+                "d-flex flex-row align-items-center",
+                styles.benefitItem
+              )}
+            >
+              <div className={styles.benefitIcon}>
                 <i className="fa fa-undo" aria-hidden="true"></i>
               </div>
               <div className="benefit_content">
@@ -38,9 +56,14 @@ function Benefit(params) {
               </div>
             </div>
           </div>
-          <div className="col-lg-3 benefit_col">
-            <div className="benefit_item d-flex flex-row align-items-center">
-              <div className="benefit_icon">
+          <div className={classNames("col-lg-3", styles.benefitCol)}>
+            <div
+              className={classNames(
+                "d-flex flex-row align-items-center",
+                styles.benefitItem
+              )}
+            >
+              <div className={styles.benefitIcon}>
                 <i className="far fa-clock"></i>
               </div>
               <div className="benefit_content">

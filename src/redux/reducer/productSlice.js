@@ -1,21 +1,42 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { productApi } from "../../api/productApi";
+import { PAGINATION_LIMIT } from "../../constant/constant";
 
 const initialState = {
   products: [],
   product: {},
-  productsFilter: [],
   status: "IDLE",
+  meta: {},
 };
 
-export const getProducts = createAsyncThunk("product/getProducts", async () => {
-  try {
-    const response = await productApi.getProducts();
-    return response.data;
-  } catch (error) {
-    throw error;
+export const getProducts = createAsyncThunk(
+  "product/getProducts",
+  async (params) => {
+    try {
+      const { data } = await productApi.getProducts({
+        name: params?.name,
+        categoryId: params?.categoryId,
+      });
+      const response = await productApi.getProducts({
+        page: 1,
+        limit: PAGINATION_LIMIT,
+        ...params,
+      });
+      return {
+        data: response.data,
+        meta: {
+          page: params?.page || 1,
+          limit: PAGINATION_LIMIT,
+          totalPage: Math.ceil(
+            data.length / (params?.limit || PAGINATION_LIMIT)
+          ),
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
   }
-});
+);
 
 export const getProduct = createAsyncThunk("product/getProduct", async (id) => {
   try {
@@ -61,22 +82,14 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    getProductByCategoryId: (state, { payload }) => {
-      state.productsFilter = state.products.filter(
-        (it) => it.categoryId === payload
-      );
-    },
-
     resetProduct: (state) => {
       state.product = {};
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getProducts.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.products = action.payload;
-        state.productsFilter = action.payload;
-      }
+    builder.addCase(getProducts.fulfilled, (state, { payload }) => {
+      state.products = payload.data;
+      state.meta = payload.meta;
     });
 
     builder.addCase(deleteProduct.fulfilled, (state, { payload }) => {
@@ -86,9 +99,14 @@ const productSlice = createSlice({
     builder.addCase(getProduct.fulfilled, (state, { payload }) => {
       state.product = payload;
     });
+
+    builder.addCase(getProducts.rejected, (state) => {
+      state.products = [];
+      state.meta = {};
+    });
   },
 });
 
-export const { getProductByCategoryId, resetProduct } = productSlice.actions;
+export const { resetProduct } = productSlice.actions;
 export default productSlice.reducer;
 export const selectProduct = (state) => state.product;

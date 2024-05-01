@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "./Header.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../redux/reducer/authSlice";
+import classNames from "classnames";
 
 function Header({ soluong, setShowCart }) {
   const { isLogged, userInfo } = useSelector((state) => state.auth);
@@ -19,11 +20,11 @@ function Header({ soluong, setShowCart }) {
   };
 
   return (
-    <div className={classes.row}>
+    <div className={classNames(classes.row, classes.header)}>
       <div className={classes.logo}>My Shop</div>
 
       {isLogged ? (
-        <p>
+        <p className="m-0">
           Xin chào,{" "}
           <Link to="/admin" className={classes.userName}>
             {userInfo.username}

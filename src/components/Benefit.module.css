@@ -1,0 +1,21 @@
+.wrapper {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.benefitItem {
+  background-color: #f3f3f3;
+  padding-top: 12px;
+  padding-left: 12px;
+  border-radius: 4px;
+  height: 100px;
+}
+
+.benefitIcon {
+  margin-right: 12px;
+
+  i {
+    font-size: 20px;
+    color: #fe4c50;
+  }
+}

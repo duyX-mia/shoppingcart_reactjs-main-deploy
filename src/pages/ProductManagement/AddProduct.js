@@ -26,7 +26,7 @@ export const ProductSchema = Yup.object().shape({
 });
 
 const AddProduct = () => {
-  const { categories } = useSelector(selectCategories);
+  const { totalCategories: categories } = useSelector(selectCategories);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

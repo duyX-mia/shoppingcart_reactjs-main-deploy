@@ -1,21 +1,41 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { userApi } from "../../api/userApi";
+import { PAGINATION_LIMIT } from "../../constant/constant";
 
 const initialState = {
   accounts: [],
   account: {},
   status: "IDLE",
+  meta: {},
+  totalAccounts: [],
 };
 
-export const fetchAccounts = createAsyncThunk("accounts/fetchAll", async () => {
-  try {
-    const response = await userApi.getUsers();
-    return response.data;
-  } catch (error) {
-    throw error;
+export const fetchAccounts = createAsyncThunk(
+  "accounts/fetchAll",
+  async (params) => {
+    try {
+      const { data } = await userApi.getUsers({
+        search: params?.search,
+      });
+      const response = await userApi.getUsers({
+        page: 1,
+        limit: PAGINATION_LIMIT,
+        ...params,
+      });
+      return {
+        totalAccounts: data,
+        data: response.data,
+        meta: {
+          page: params?.page || 1,
+          limit: PAGINATION_LIMIT,
+          totalPage: Math.ceil(data.length / PAGINATION_LIMIT),
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
   }
-});
+);
 
 export const fetchAccount = createAsyncThunk("accounts/fetch", async (id) => {
   try {
@@ -73,11 +93,11 @@ const AccountSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAccounts.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.accounts = action.payload;
-          state.status = "SUCCESS";
-        }
+      .addCase(fetchAccounts.fulfilled, (state, { payload }) => {
+        state.accounts = payload.data;
+        state.meta = payload.meta;
+        state.status = "SUCCESS";
+        state.totalAccounts = payload.totalAccounts;
       })
       .addCase(fetchAccounts.pending, (state) => {
         state.status = "LOADING";

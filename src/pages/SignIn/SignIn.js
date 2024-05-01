@@ -30,9 +30,9 @@ function SignIn() {
 
   const onSubmit = async ({ email, password }) => {
     try {
-      const accounts = await dispatch(fetchAccounts()).unwrap();
+      const { totalAccounts } = await dispatch(fetchAccounts()).unwrap();
 
-      const findUser = accounts.find(
+      const findUser = totalAccounts.find(
         (it) => it.email === email && it.password === password
       );
 

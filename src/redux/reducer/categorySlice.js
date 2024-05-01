@@ -1,18 +1,36 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { categoryApi } from "../../api/categoryApi";
+import { PAGINATION_LIMIT } from "../../constant/constant";
 
 const initialState = {
   categories: [],
   category: {},
   status: "IDLE",
+  meta: {},
+  totalCategories: [],
 };
 
 export const getCategories = createAsyncThunk(
   "category/getCategories",
-  async () => {
+  async (params) => {
     try {
-      const response = await categoryApi.getCategories();
-      return response.data;
+      const { data } = await categoryApi.getCategories({
+        search: params?.search,
+      });
+      const response = await categoryApi.getCategories({
+        page: 1,
+        limit: PAGINATION_LIMIT,
+        ...params,
+      });
+      return {
+        totalCategories: data,
+        data: response.data,
+        meta: {
+          page: params?.page || 1,
+          limit: PAGINATION_LIMIT,
+          totalPage: Math.ceil(data.length / PAGINATION_LIMIT),
+        },
+      };
     } catch (error) {
       throw error;
     }
@@ -74,10 +92,10 @@ const categorySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getCategories.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.categories = action.payload;
-      }
+    builder.addCase(getCategories.fulfilled, (state, { payload }) => {
+      state.categories = payload.data;
+      state.meta = payload.meta;
+      state.totalCategories = payload.totalCategories;
     });
 
     builder.addCase(deleteCategory.fulfilled, (state, { payload }) => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./Product.module.css";
 import { Link } from "react-router-dom";
@@ -9,14 +9,23 @@ import {
   selectProduct,
 } from "../../redux/reducer/productSlice";
 import { formatCurrency } from "../../utils/common";
+import { Table } from "react-bootstrap";
+import { useDebounce } from "../../hook/useDebounce";
+import Pagination from "../../components/pagination/Pagination";
 
 const ListProducts = () => {
-  const { products } = useSelector(selectProduct);
+  const [params, setParams] = useState({
+    page: 1,
+    search: "",
+  });
+  const { products, meta } = useSelector(selectProduct);
   const dispatch = useDispatch();
 
+  const searchStr = useDebounce(params.search, 500);
+
   useEffect(() => {
-    dispatch(getProducts());
-  }, []);
+    dispatch(getProducts(params));
+  }, [params.page, searchStr]);
 
   const onDeleteProduct = (id) => {
     const isConfirm = window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
@@ -24,6 +33,11 @@ const ListProducts = () => {
     if (isConfirm) {
       dispatch(deleteProduct(id));
     }
+  };
+
+  const onInputFieldChange = (e) => {
+    const value = e.target.value;
+    setParams({ page: 1, search: value });
   };
 
   return (
@@ -36,7 +50,18 @@ const ListProducts = () => {
         </Link>
       </div>
 
-      <table border={1} className={styles.table}>
+      <div className="mt-3 justify-content-end d-flex">
+        <div style={{ width: 300 }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Nhập từ khoá tìm kiếm"
+            onChange={onInputFieldChange}
+          />
+        </div>
+      </div>
+
+      <Table bordered hover className={styles.table}>
         <thead>
           <th>STT</th>
           <th>ID</th>
@@ -83,7 +108,9 @@ const ListProducts = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
+
+      <Pagination meta={meta} setParams={setParams} />
     </>
   );
 };

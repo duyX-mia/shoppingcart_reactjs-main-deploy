@@ -18,7 +18,7 @@ import { Formik } from "formik";
 import { ProductSchema } from "./AddProduct";
 
 const EditProduct = () => {
-  const { categories } = useSelector(selectCategories);
+  const { totalCategories: categories } = useSelector(selectCategories);
   const { product } = useSelector(selectProduct);
   const params = useParams();
 

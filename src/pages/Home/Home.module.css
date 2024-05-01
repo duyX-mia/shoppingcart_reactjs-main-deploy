@@ -11,23 +11,22 @@
   min-width: 500px;
   justify-content: center;
 }
-.left {
-}
-.right {
-  flex: 1;
-}
+
 .cat {
   text-align: left;
   border: 1px solid #1b32a5;
   padding: 10px 15px;
+  border-radius: 8px;
 }
-.cat:hover {
+.cat:hover,
+.cat.active {
   background-color: #1c2554;
   color: white;
   font-size: 16pt;
   cursor: pointer;
 }
 .boxes {
+  margin-top: 12px;
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(4, 1fr);
@@ -61,4 +60,20 @@
   color: #fff !important;
   cursor: pointer;
   border-radius: 4px;
+  font-size: 14px;
+}
+
+.categories {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.listCategories {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
 }

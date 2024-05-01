@@ -13,44 +13,44 @@ import {
   getCategories,
   selectCategories,
 } from "../../redux/reducer/categorySlice";
-import {
-  getProductByCategoryId,
-  getProducts,
-  selectProduct,
-} from "../../redux/reducer/productSlice";
+import { getProducts, selectProduct } from "../../redux/reducer/productSlice";
 import { formatCurrency } from "../../utils/common";
+import Pagination from "../../components/pagination/Pagination";
+import classNames from "classnames";
+import { useDebounce } from "../../hook/useDebounce";
 
 function Home() {
+  const [params, setParams] = useState({
+    page: 1,
+    limit: 8,
+    name: "",
+    categoryId: "",
+  });
   const dispatch = useDispatch();
-  const { categories } = useSelector(selectCategories);
-  const { productsFilter } = useSelector(selectProduct);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const { totalCategories } = useSelector(selectCategories);
+  const { products, meta } = useSelector(selectProduct);
 
   const [isShowModal, setShowModal] = useState(false);
   const [cart, setCart] = useState([]);
   const [isShowCart, setShowCart] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    dispatch(getProductByCategoryId(selectedCategory));
-  }, [selectedCategory]);
-
-  const fetchData = async () => {
-    try {
-      await dispatch(getProducts()).unwrap();
-
-      await dispatch(getCategories()).unwrap();
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchProducts = (paramsFetchData) => {
+    dispatch(getProducts(paramsFetchData));
   };
 
+  const searchStr = useDebounce(params.name, 500);
+
+  useEffect(() => {
+    fetchProducts(params);
+  }, [params.page, params.categoryId, searchStr]);
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, []);
+
   const onClickCategoryHandler = (categoryId) => {
-    setSelectedCategory(categoryId);
+    setParams((prev) => ({ ...prev, page: 1, name: "", categoryId }));
   };
 
   const onClickProductHandler = (product) => {
@@ -72,23 +72,17 @@ function Home() {
     setCart([...arr]);
   };
 
+  const onInputFieldChange = (e) => {
+    const value = e.target.value;
+    setParams((prev) => ({ ...prev, page: 1, name: value, categoryId: "" }));
+  };
+
   return (
     <div className={classes.container}>
       <Header soluong={cart.length} setShowCart={setShowCart} />
-      
-      <div className={classes.row}>
-        <h1>Duy Shopping Cart</h1>
-      </div>
 
-      <div className={classes.row}>
-        <div class="sub-banner">
-          <img
-            src="https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/2024/01/banner/1920x450--2--1920x450.jpg"
-            alt="sub banner"
-            width="100%"
-            height="400px"
-          />
-        </div>
+      <div className="text-center pt-5">
+        <h1 className="my-3">Duy Shopping Cart</h1>
       </div>
 
       <HomeBanner />
@@ -114,67 +108,89 @@ function Home() {
           </Modal>
         )}
       </div>
-      <div className={classes.row}>
-        <div className={classes.left}>
-          <h2>Categories</h2>
-          {categories.map((cate) => (
-            <div
-              className={classes.cat}
-              key={cate.id}
-              onClick={() => onClickCategoryHandler(cate.id)}
-            >
-              {cate.name}
+
+      {/* products */}
+      {!isShowCart && (
+        <>
+          <div className={classes.categories}>
+            <h2>Categories</h2>
+
+            <div className={classes.listCategories}>
+              {totalCategories.map((cate) => (
+                <div
+                  className={classNames(classes.cat, {
+                    [classes.active]: cate.id === params?.categoryId,
+                  })}
+                  key={cate.id}
+                  onClick={() => onClickCategoryHandler(cate.id)}
+                >
+                  {cate.name}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className={classes.right}>
-          {!isShowCart && (
-            <>
-              <h2>Products</h2>
-              <div className={classes.boxes}>
-                {productsFilter.map((product) => (
-                  <div className={classes.product} key={product.id}>
-                    <h3>{product.name}</h3>
-                    <img
-                      src={product.image}
-                      alt={product.name} // Provide meaningful text related to the image
-                      className={classes.productImage}
-                    />
-                    <h4>{formatCurrency(+product.price)}</h4>
+          </div>
+
+          <div className="p-3">
+            <div className="d-flex align-items-center justify-content-between">
+              <h2 className="text-center">Products</h2>
+
+              <div style={{ width: 300 }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Nhập từ khoá tìm kiếm"
+                  value={params.name}
+                  onChange={onInputFieldChange}
+                />
+              </div>
+            </div>
+
+            <div className={classes.boxes}>
+              {products.map((product) => (
+                <div className={classes.product} key={product.id}>
+                  <h3 className="fs-5 my-3">{product.name}</h3>
+                  <img
+                    src={product.image}
+                    alt={product.name} // Provide meaningful text related to the image
+                    className={classes.productImage}
+                  />
+                  <h4 className="fs-6 my-3">
+                    {formatCurrency(+product.price)}
+                  </h4>
+                  <button
+                    className={classes.button}
+                    onClick={() => onClickProductHandler(product)}
+                  >
+                    Detail
+                  </button>{" "}
+                  &nbsp;
+                  {cart.indexOf(product) !== -1 ? (
+                    <span className={classes.datontai}>
+                      Sản phẩm đã có trong giỏ
+                    </span>
+                  ) : (
                     <button
                       className={classes.button}
-                      onClick={() => onClickProductHandler(product)}
+                      onClick={() => onAddToCartHandler(product)}
                     >
-                      Detail
-                    </button>{" "}
-                    &nbsp;
-                    {cart.indexOf(product) !== -1 ? (
-                      <span className={classes.datontai}>
-                        Sản phẩm đã có trong giỏ
-                      </span>
-                    ) : (
-                      <button
-                        className={classes.button}
-                        onClick={() => onAddToCartHandler(product)}
-                      >
-                        Add to Cart
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+                      Add to Cart
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-          {isShowCart && (
-            <Giohang setShowCart={setShowCart} cart={cart} setCart={setCart} />
-          )}
-        </div>
-      </div>
+          <Pagination meta={meta} setParams={setParams} />
+        </>
+      )}
+
+      {isShowCart && (
+        <Giohang setShowCart={setShowCart} cart={cart} setCart={setCart} />
+      )}
       <Benefit />
       <Advertisement />
       <Footer />
-
     </div>
   );
 }
