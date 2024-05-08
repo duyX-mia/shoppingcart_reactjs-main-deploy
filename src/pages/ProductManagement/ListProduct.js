@@ -12,6 +12,10 @@ import { formatCurrency } from "../../utils/common";
 import { Table } from "react-bootstrap";
 import { useDebounce } from "../../hook/useDebounce";
 import Pagination from "../../components/pagination/Pagination";
+import {
+  getCategories,
+  selectCategories,
+} from "../../redux/reducer/categorySlice";
 
 const ListProducts = () => {
   const [params, setParams] = useState({
@@ -19,6 +23,7 @@ const ListProducts = () => {
     search: "",
   });
   const { products, meta } = useSelector(selectProduct);
+  const { totalCategories } = useSelector(selectCategories);
   const dispatch = useDispatch();
 
   const searchStr = useDebounce(params.search, 500);
@@ -26,6 +31,16 @@ const ListProducts = () => {
   useEffect(() => {
     dispatch(getProducts(params));
   }, [params.page, searchStr]);
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, []);
+
+  const renderCategoryName = (categoryId) => {
+    const foundCategory = totalCategories?.find((it) => it.id === categoryId);
+
+    return foundCategory?.name;
+  };
 
   const onDeleteProduct = (id) => {
     const isConfirm = window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
@@ -90,7 +105,7 @@ const ListProducts = () => {
                 />
               </td>
               <td>{it.categoryId}</td>
-              <td></td>
+              <td>{renderCategoryName(it.categoryId)}</td>
               <td>
                 <div className={styles.actions}>
                   <Link
