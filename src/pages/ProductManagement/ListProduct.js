@@ -70,6 +70,7 @@ const ListProducts = () => {
           <th>Price</th>
           <th>Image</th>
           <th>Category Id</th>
+          <th>Category Name</th>
           <th>Actions</th>
         </thead>
 
@@ -89,6 +90,7 @@ const ListProducts = () => {
                 />
               </td>
               <td>{it.categoryId}</td>
+              <td></td>
               <td>
                 <div className={styles.actions}>
                   <Link
